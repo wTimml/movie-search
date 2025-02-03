@@ -9,11 +9,11 @@ This is a personal project built with Next.js to explore and practice modern web
 Some Features:
 
 * Search Movies: Fetches movie data from The Movie Database (TMDB) API.
-* 
+ 
 * Filter by Genre: Allows users to filter search results based on selected genres.
-* 
+ 
 * Sort Results: Provides sorting options based on popularity and title.
-* 
+ 
 * Movie Details: Displays relevant information for each movie, including title, overview, and poster.
-* 
+ 
 * Persistent Search: Saves search results to local storage to improve user experience.
