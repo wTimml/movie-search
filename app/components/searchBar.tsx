@@ -4,7 +4,7 @@ interface ChildProps {
   setSearchText: (value: string) => void;
 }
 
-export default function searchBar({ searchText, setSearchText }: ChildProps) {
+export default function SearchBar({ searchText, setSearchText }: ChildProps) {
 
   // function handleSearch(term: string) {
   //   setSearchText(term)

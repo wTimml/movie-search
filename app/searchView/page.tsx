@@ -1,26 +1,23 @@
 'use client'
 
 import { useEffect, useState } from "react";
-import { IoIosArrowDown } from "react-icons/io";
 
-interface moviesData {
+interface MoviesData {
     id: string;
     overview: string;
     poster_path: string;
     original_title: string;
     backdrop_path: string;
     popularity: number;
-    genre: []
-    genre_ids: number[]
+    genre: string[];
+    genre_ids: number[];
 }
 
 interface ChildProps {
-    searchText: string;
-    searchResults: moviesData[];
+    searchResults: MoviesData[];
 }
 
-export default function searchView({ searchText, searchResults }: ChildProps) {
-
+export default function SearchView({ searchResults }: ChildProps) {
     const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
     const [selectedGenresNames, setSelectedGenresNames] = useState<string[]>([]);
     const [sortBy, setSortBy] = useState<string>('popularity');
@@ -33,8 +30,7 @@ export default function searchView({ searchText, searchResults }: ChildProps) {
         fetch(`https://api.themoviedb.org/3/genre/movie/list?api_key=ab166ff82684910ae3565621aea04d62&language=en-US`)
           .then(response => response.json())
           .then(data => setGenresList(data.genres));
-      }, []);
-
+    }, []); // Empty dependency array to fetch only once
 
     const handleGenreChange = (genreId: string, genreName: string) => {
         setSelectedGenres((prev) =>
@@ -46,8 +42,7 @@ export default function searchView({ searchText, searchResults }: ChildProps) {
         );
     };
 
-
-    function MovieCard({ movie }: { movie: moviesData }) {
+    function MovieCard({ movie }: { movie: MoviesData }) {
         const posterUrl = `https://image.tmdb.org/t/p/w500${movie.poster_path}`;
         const detailUrl = `/movies/${movie.id}`;
       
@@ -68,23 +63,21 @@ export default function searchView({ searchText, searchResults }: ChildProps) {
           </div>
         );
       }
-
-
     
     return (
         <div className="container mx-auto px-4 py-8 dark:text-white">
-            {
-                searchResults.length > 0 ? (
-
+            {Array.isArray(searchResults) && searchResults.length > 0 && ( // Check if it's an array
                     <div className="flex justify-end mb-4 gap-x-5">
-
                         {/* Genre */}
-                        <div className="relative w-auto ">
-                            <button className="border p-2 rounded bg-violet-200 text-gray-800 shadow flex" onClick={() => setIsGenreDropdownOpen(!isGenreDropdownOpen)}>Select Genres 
+                    <div className="relative w-auto">
+                    <button
+                        className="border p-2 rounded bg-violet-200 text-gray-800 shadow flex"
+                        onClick={() => setIsGenreDropdownOpen(!isGenreDropdownOpen)}
+                    >
+                            Select Genres
                             </button>
 
                             {isGenreDropdownOpen && (
-
                                 <div className="absolute bg-white border rounded shadow-lg mt-2 max-h-60 overflow-auto no-scrollbar overscroll-y-none w-40">
                                 {genresList.map((genre) => (
                                     <label key={genre.id} className="block px-4 py-2 bg-violet-200 text-gray-800">
@@ -102,52 +95,37 @@ export default function searchView({ searchText, searchResults }: ChildProps) {
                             )}
                         </div>
 
-
-                        {/* Sort */}
-                        <select
-                            className="border p-2 rounded bg-violet-200 text-gray-800"
-                            value={sortBy}
-                            onChange={(e) => setSortBy(e.target.value)}
-                        >
+                    {/* Sort */}
+                    <select className="border p-2 rounded bg-violet-200 text-gray-800" value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
                             <option value="popularity">Most Popular</option>
                             <option value="title">Title A-Z</option>
                         </select>
-
                     </div>
+            )}
 
-                ) : ''
-            }
-
-            {/* // Show selected genres */}
-            {
-                selectedGenres ? (
+            {/* Show selected genres */}
+                {selectedGenres.length > 0 && (
                     <div className="container mx-auto px-4 py-1 dark:text-white">
                         <div className="flex justify-start mb-4 gap-x-5">
-                            {
-                                selectedGenresNames.map((genre) => (
+                        {selectedGenresNames.map((genre) => (
                                     <p key={genre}>{genre}</p>
-                                ))
-                            }
-                        </div>
+                        ))}
                     </div>
-                ) : ''
-            }
+                </div>
+            )}
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10">
-                {
+                {Array.isArray(searchResults) && // Ensure it's an array before using .filter
                 searchResults
-                    .filter((movie) => selectedGenres.length === 0 || movie.genre_ids.some((id) => selectedGenres.includes(id.toString())))
-                    .slice() // Copy to avoid mutating state directly
+                    .filter(
+                    (movie) =>
+                        selectedGenres.length === 0 || movie.genre_ids.some((id) => selectedGenres.includes(id.toString()))
+                    )
                     .sort((a, b) => (sortBy === "title" ? a.original_title.localeCompare(b.original_title) : b.popularity - a.popularity))
-                    .map((obj, i) => (
-                    <MovieCard key={i} movie={obj} />
-
+                    .map((movie, i) => (
+                        <MovieCard key={i} movie={movie} />
                 ))}
-
             </div>
         </div>
-
     );
-          
-
 }

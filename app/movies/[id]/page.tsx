@@ -13,7 +13,7 @@ interface movieData {
   backdrop_path: string;
 }
 
-export default function movies() {
+export default function Movies() {
 
   const params = useParams();
   const [movieDetails, setMovieDetails] = useState<movieData>();

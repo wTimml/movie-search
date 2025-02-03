@@ -1,15 +1,16 @@
 import DarkModeToggle from "@/app/components/darkModeToggle";
+import Link from "next/link";
 
 export default function navbar() {
   return (
     <nav className="fixed top-0 left-0 w-full shadow-lg shadow-indigo-700/50 z-50 bg-white dark:bg-black dark:shadow-pink-500">
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
         <div className="text-xl font-bold text-pink-600">
-          <a href="/">Movies Browser</a>
+          <Link href="/">Movies Browser</Link>
         </div>
           <ul className="flex space-x-10">
-            <li><a href="/" className="text-black hover:text-pink-600 dark:text-white">Home</a></li>
-            <li><a href="/about" className="text-black hover:text-pink-600 dark:text-white">About</a></li>
+            <li><Link href="/" className="text-black hover:text-pink-600 dark:text-white">Home</Link></li>
+            <li><Link href="/about" className="text-black hover:text-pink-600 dark:text-white">About</Link></li>
             <li><a className="hover:cursor-pointer">
               <DarkModeToggle/>
             </a></li>

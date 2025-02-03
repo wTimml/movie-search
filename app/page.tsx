@@ -5,15 +5,15 @@ import Searchbar from "./components/searchBar";
 import SearchView from "./searchView/page";
 import { useRouter, useSearchParams } from "next/navigation";
 
-interface moviesData {
+interface MoviesData {
   id: string;
   overview: string;
   poster_path: string;
   original_title: string;
   backdrop_path: string;
   popularity: number;
-  genre: []
-  genre_ids: []
+  genre: string[];
+  genre_ids: number[];
 }
 
 export default function Home() {
@@ -21,10 +21,10 @@ export default function Home() {
   const searchParams = useSearchParams();
 
   const [searchText, setSearchText] = useState<string>(searchParams.get("q") || '');
-  const [searchResults, setSearchResults] = useState<moviesData[]>([]);
+  const [searchResults, setSearchResults] = useState<MoviesData[]>([]);
 
   const fetchMovies = async (query: string, numPages = 1) => {
-    let allResults: moviesData[] = [];
+    let allResults: MoviesData[] = [];
   
     for (let page = 1; page <= numPages; page++) {
       const response = await fetch(
@@ -32,13 +32,13 @@ export default function Home() {
       );
       const data = await response.json();
       
-      if (data.results) {
-        allResults = [...allResults, ...data.results]; // Merge results
+      if (data.results && Array.isArray(data.results)) {
+        allResults = [...allResults, ...data.results];
       }
     }
   
-    console.log(allResults)
     localStorage.setItem(`searchResults-${query}`, JSON.stringify(allResults));
+    setSearchResults(allResults); // Update state after fetching
   };
   
 
@@ -49,8 +49,8 @@ export default function Home() {
       if (savedResults) {
         setSearchResults(JSON.parse(savedResults));
       } else {
-        // 40 movies
-        fetchMovies(searchText,2);
+        // Fetch movies if no saved results
+        fetchMovies(searchText, 2);
       }
     }
   }, [searchText]);
@@ -60,16 +60,14 @@ export default function Home() {
     setSearchText(term);
     router.push(`/?q=${term}`);
   };
-        
 
   return (
     <div className=" mt-24 ">
       <div className="flex items-center justify-center mb-6">
-
         <h1 className="dark:text-white text-3xl font-bold">Search for a Movie</h1>
       </div>
-      <Searchbar searchText={searchText} setSearchText={handleSearch}/>
-      <SearchView searchText={searchText} searchResults={searchResults} />
+      <Searchbar searchText={searchText} setSearchText={handleSearch} />
+      <SearchView searchResults={searchResults} />
     </div>
   );
 }
