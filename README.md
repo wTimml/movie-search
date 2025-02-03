@@ -1,5 +1,9 @@
 Next.js Movie Search App
 
+You can check this deployed in Vercel:
+
+https://moviesearch-bay.vercel.app/
+
 This is a personal project built with Next.js to explore and practice modern web development while creating a movie search website. The goal of this project is to enhance my skills and add a meaningful project to my portfolio.
 
 Some Features:
